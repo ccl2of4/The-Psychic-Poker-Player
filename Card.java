@@ -34,6 +34,7 @@ public class Card implements Comparable {
 		return faceval;
 	}
 
+	@Override
 	public String toString () {
 		String result = "";
 

@@ -33,7 +33,8 @@ public class Main {
 		return result;
 	}
 
-	public static void printSolution (List<Card> hand, Stack<Card> deck, String result) {			System.out.print ("Hand: ");
+	public static void printSolution (List<Card> hand, Stack<Card> deck, String result) {
+		System.out.print ("Hand: ");
 		for (Card card : hand) {
 			System.out.print (card + " ");
 		}
