@@ -30,7 +30,7 @@ public class Card implements Comparable {
 	public Suit getSuit () {
 		return suit;
 	}
-	public FaceValue getFaceVal () {
+	public FaceValue getFaceValue () {
 		return faceval;
 	}
 

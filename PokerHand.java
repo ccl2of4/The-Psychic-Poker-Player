@@ -1,8 +1,10 @@
 import java.util.Set;
+import java.util.List;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Iterator;
 
-public class PokerHand implements Comparable {
+public class PokerHand implements Comparable, Iterable<Card> {
 
 	private static LinkedHashMap<String, PokerHandFinder> hands;
 
@@ -75,13 +77,19 @@ public class PokerHand implements Comparable {
 		compute ();
 	}
 
+	public PokerHand (List<Card> cards) {
+		this.cards = new HashSet<Card> (cards);
+		this.key = null;
+		compute ();
+	}
+
 	public PokerHand (PokerHand other) {
 		this.cards = new HashSet<Card> (other.cards);
 		this.key = other.key;
 	}
 
-	public String getKey () {
-		return this.key;
+	public Iterator<Card> iterator () {
+		return cards.iterator ();
 	}
 
 	public void swap (Card oldCard, Card newCard) {
@@ -148,6 +156,19 @@ public class PokerHand implements Comparable {
 	}
 
 	private boolean findOnePair () {
+
+		Card[] array = cards.toArray (new Card[0]);
+
+		for (int i = 0; i < array.length; ++i) {
+			Card first = array[i];
+			for (int j = i + 1; j < array.length; ++j) {
+				Card second = array[j];
+
+				if (first.getFaceValue () == second.getFaceValue ())
+					return true;
+
+			}
+		}
 		return false;
 	}
 

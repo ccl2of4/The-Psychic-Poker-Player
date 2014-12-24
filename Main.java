@@ -29,13 +29,28 @@ public class Main {
 	}
 
 	public static String solve (List<Card> hand, Stack<Card> deck) {
-		String result = "null";
+		PokerHand startingHand = new PokerHand (hand);
+		PokerHand bestHand = solveHelper (startingHand, deck);
+		return bestHand.toString ();
+	}
 
-		for (Card card : hand) {
-			
+	public static PokerHand solveHelper (PokerHand p, Stack<Card> deck) {
+
+		if (deck.size () == 0)
+			return p;
+
+		PokerHand bestp = p;
+		Card topCard = deck.pop ();
+
+		for (Card card : p) {
+			PokerHand otherp = new PokerHand (p);
+			otherp.swap (card, topCard);
+			PokerHand bestOtherp = solveHelper (otherp, deck);
+
+			if (bestp.compareTo (bestOtherp) > 0) bestp = bestOtherp;
 		}
 
-		return result;
+		return bestp;
 	}
 
 	public static void printSolution (List<Card> hand, Stack<Card> deck, String result) {
@@ -63,8 +78,9 @@ public class Main {
 
 			List<Card> hand = readHand (input);
 			Stack<Card> deck = readDeck (input);
+			Stack<Card> deckClone = (Stack<Card>)deck.clone ();
 
-			String result = solve (hand, deck);
+			String result = solve (hand, deckClone);
 
 			printSolution (hand, deck, result);
 
