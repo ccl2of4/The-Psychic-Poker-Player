@@ -1,47 +1,67 @@
+import java.util.List;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class Main {
 
+	public static List<Card> readHand (Iterator<String> input) {
+		ArrayList<Card> result = new ArrayList<Card> ();
+		for (int i = 0; i < 5; ++i) {
+			assert (input.hasNext ());
+			String cardString = input.next ();
+			Card card = CardReader.readCard (cardString);
+			result.add (card);
+		}
+		return result;
+	}
+
+	public static Stack<Card> readDeck (Iterator<String> input) {
+		Stack<Card> result = new Stack<Card> ();
+		for (int i = 0; i < 5; ++i) {
+			assert (input.hasNext ());
+			String cardString = input.next ();
+			Card card = CardReader.readCard (cardString);
+			result.push (card);
+		}
+		return result;
+	}
+
+	public static String solve (List<Card> hand, Stack<Card> deck) {
+		String result = "Not done yet.";
+		return result;
+	}
+
+	public static void printSolution (List<Card> hand, Stack<Card> deck, String result) {			System.out.print ("Hand: ");
+		for (Card card : hand) {
+			System.out.print (card + " ");
+		}
+
+		System.out.print ("Deck: ");
+		for (Card card : deck) {
+			System.out.print (card + " ");
+		}
+
+		System.out.print ("Best hand: ");
+		System.out.print (result);
+
+		System.out.println ();
+	}
+
 	public static void main (String[] args) {
 
-		Scanner in = new Scanner (System.in);
+		Scanner input = new Scanner (System.in);
 
-		while (true) {
+		while (input.hasNext ()) {
 
-			ArrayList<Card> hand = new ArrayList<Card> ();
-			Stack<Card> deck = new Stack<Card> ();
+			List<Card> hand = readHand (input);
+			Stack<Card> deck = readDeck (input);
 
-			for (int i = 0; i < 5; ++i) {
-				assert (in.hasNext ());
-				String cardString = in.next ();
-				Card card = CardReader.readCard (cardString);
-				hand.add (card);
-			}
+			String result = solve (hand, deck);
 
-			for (int i = 0; i < 5; ++i) {
-				assert (in.hasNext ());
-				String cardString = in.next ();
-				Card card = CardReader.readCard (cardString);
-				deck.push (card);
-			}
+			printSolution (hand, deck, result);
 
-			System.out.print ("Hand: ");
-			for (Card card : hand) {
-				System.out.print (card + " ");
-			}
-
-			System.out.print ("Deck: ");
-			for (Card card : deck) {
-				System.out.print (card + " ");
-			}
-
-			System.out.println ("Best hand: ");
-
-			System.out.println ();
-
-			if (!in.hasNext ()) break;
 		}
 
 		return;
