@@ -29,7 +29,12 @@ public class Main {
 	}
 
 	public static String solve (List<Card> hand, Stack<Card> deck) {
-		String result = "Not done yet.";
+		String result = "null";
+
+		for (Card card : hand) {
+			
+		}
+
 		return result;
 	}
 
