@@ -1,4 +1,4 @@
-public class Card implements Comparable {
+public class Card implements Comparable<Card> {
 	
 	public enum Suit {
 		SPADES, CLUBS, HEARTS, DIAMONDS
@@ -104,11 +104,7 @@ public class Card implements Comparable {
 
 	/* comparable */
 	@Override
-	public int compareTo (Object other) {
-		if (other instanceof Card) {
-			Card otherCard = (Card)other;
-			return this.faceval.getVal () - otherCard.faceval.getVal ();
-		}
-		return 0;
+	public int compareTo (Card other) {
+		return this.faceval.getVal () - other.faceval.getVal ();
 	}
 }

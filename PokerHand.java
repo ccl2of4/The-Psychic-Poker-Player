@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
 
-public class PokerHand implements Comparable, Iterable<Card> {
+public class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 
 	private static LinkedHashMap<String, PokerHandFinder> hands;
 
@@ -104,16 +104,11 @@ public class PokerHand implements Comparable, Iterable<Card> {
 	}
 
 	@Override
-	public int compareTo (Object other) {
-		if (other instanceof PokerHand) {
-			PokerHand otherHand = (PokerHand)other;
+	public int compareTo (PokerHand other) {
+		PokerHandFinder thisFinder = hands.get (this.key);
+		PokerHandFinder otherFinder = hands.get (other.key);
 
-			PokerHandFinder thisFinder = hands.get (this.key);
-			PokerHandFinder otherFinder = hands.get (otherHand.key);
-
-			return thisFinder.getPriority () - otherFinder.getPriority ();
-		}
-		return 0;
+		return otherFinder.getPriority () - thisFinder.getPriority ();
 	}
 
 	private void compute () {
