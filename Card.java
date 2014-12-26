@@ -1,7 +1,7 @@
 public class Card implements Comparable<Card> {
 	
 	public enum Suit {
-		SPADES, CLUBS, HEARTS, DIAMONDS
+		SPADES, CLUBS, HEARTS, DIAMONDS, NONE
 	}
 
 	public enum FaceValue  {

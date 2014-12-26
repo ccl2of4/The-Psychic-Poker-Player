@@ -19,21 +19,60 @@ public class Main {
 
 	public static Stack<Card> readDeck (Iterator<String> input) {
 		Stack<Card> result = new Stack<Card> ();
+		Stack<Card> in = new Stack<Card> ();
 		for (int i = 0; i < 5; ++i) {
 			assert (input.hasNext ());
 			String cardString = input.next ();
 			Card card = CardReader.readCard (cardString);
-			result.push (card);
+			in.push (card);
 		}
+
+		while (!in.empty ())
+			result.push (in.pop ());
+
 		return result;
 	}
 
 	public static String solve (List<Card> hand, Stack<Card> deck) {
-		return null;
+		List<Card> usedDeckCards = new ArrayList<Card> ();
+		PokerHand best = null;
+
+		while (true) {
+			
+			PokerHand result = solveHelper (usedDeckCards, hand);
+			if (best == null || result.compareTo (best) > 0)
+				best = result;
+
+			if (deck.empty ())
+				break;
+
+			usedDeckCards.add (deck.pop ());
+		}
+
+		assert (best != null);
+		return best.toString ();
 	}
 
-	public static PokerHand solveHelper (PokerHand p, Stack<Card> deck, int numCardsToDiscard) {
-		return null;
+	public static PokerHand solveHelper (List<Card> usedCards, List<Card> hand) {
+		if (usedCards.size () == 5)
+			return new PokerHand (usedCards);
+
+		PokerHand best = null;
+
+		for (Card card : hand) {
+			List<Card> tempUsedCards = new ArrayList<Card> (usedCards);
+			List<Card> tempHand = new ArrayList<Card> (hand);
+
+			tempHand.remove (card);
+			tempUsedCards.add (card);
+
+			PokerHand result = solveHelper (tempUsedCards, tempHand);
+			if (best == null || result.compareTo (best) > 0)
+				best = result;
+		}
+
+		assert (best != null);
+		return best;
 	}
 
 	public static void printSolution (List<Card> hand, Stack<Card> deck, String result) {
