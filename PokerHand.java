@@ -3,10 +3,12 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.LinkedHashMap;
 import java.util.Arrays;
+import java.util.Stack;
 
-public class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
+public final class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 
 	private static LinkedHashMap<String, PokerHandFinder> hands;
 
@@ -90,30 +92,30 @@ public class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 		this.key = other.key;
 	}
 
-	public Iterator<Card> iterator () {
+	public final Iterator<Card> iterator () {
 		return cards.iterator ();
 	}
 
-	public void swap (Card oldCard, Card newCard) {
+	public final void swap (Card oldCard, Card newCard) {
 		this.cards.remove (oldCard);
 		this.cards.add (newCard);
 		compute ();
 	}
 
 	@Override
-	public String toString () {
+	public final String toString () {
 		return key;
 	}
 
 	@Override
-	public int compareTo (PokerHand other) {
+	public final int compareTo (PokerHand other) {
 		PokerHandFinder thisFinder = hands.get (this.key);
 		PokerHandFinder otherFinder = hands.get (other.key);
 
 		return otherFinder.getPriority () - thisFinder.getPriority ();
 	}
 
-	private void compute () {
+	private final void compute () {
 		for (String key : hands.keySet ()) {
 			PokerHandFinder p = hands.get (key);
 			if (p.find (this)) {
@@ -124,19 +126,21 @@ public class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 		assert (this.key != null);
 	}
 
-	private boolean findStraightFlush () {
+	private final boolean findStraightFlush () {
 		return false;
 	}
 
-	private boolean findFourOfAKind () {
-		return false;
+	private final boolean findFourOfAKind () {
+		List<Card> cardsList = new ArrayList<Card> (cards);
+		return findMatches (cardsList, 4, false);
 	}
 
-	private boolean findFullHouse () {
-		return false;
+	private final boolean findFullHouse () {
+		List<Card> cardsList = new ArrayList<Card> (cards);
+		return findMatches (cardsList, 2, true) && findMatches (cardsList, 3, false);
 	}
 
-	private boolean findFlush () {
+	private final boolean findFlush () {
 		Card.Suit suit = Card.Suit.NONE;
 		for (Card card : cards) {
 			if (suit == Card.Suit.NONE)
@@ -147,7 +151,7 @@ public class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 		return true;
 	}
 
-	private boolean findStraight () {
+	private final boolean findStraight () {
 		Card[] array = cards.toArray (new Card[0]);
 		Arrays.sort (array);
 
@@ -170,8 +174,8 @@ public class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 		return true;
 	}
 
-	private boolean findThreeOfAKind () {
-		List<Card> cardsList = Arrays.asList(cards.toArray (new Card[0]));
+	private final boolean findThreeOfAKind () {
+		List<Card> cardsList = new ArrayList<Card> (cards);
 		for (int i = 0; i < cardsList.size (); ++i) {
 			Card first = cardsList.get (i);
 
@@ -191,65 +195,61 @@ public class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 		return false;
 	}
 
-	private boolean findTwoPairs () {
-		List<Card> cardsList = Arrays.asList(cards.toArray (new Card[0]));
-		List<Card> matchedCards = new ArrayList<Card> ();
-
-		boolean foundFirst = false;
-		boolean foundSecond = false;
-
-		firstLoop: for (int i = 0; i < cardsList.size (); ++i) {
-			Card first = cardsList.get (i);
-			for (int j = i + 1; j < cardsList.size (); ++j) {
-				Card second = cardsList.get (j);
-
-				if (first.getFaceValue () == second.getFaceValue ())  {
-					matchedCards.add (first);
-					matchedCards.add (second);
-					foundFirst = true;
-					break firstLoop;
-				}
-			}
-		}
-		if (!foundFirst) return false;
-
-		secondLoop: for (int i = 0; i < cardsList.size (); ++i) {
-			Card first = cardsList.get (i);
-			if (matchedCards.contains (first)) continue;
-
-			for (int j = i + 1; j < cardsList.size (); ++j) {
-				Card second = cardsList.get (j);
-				if (matchedCards.contains (second)) continue;
-
-				if (first.getFaceValue () == second.getFaceValue ())  {
-					foundSecond = true;
-					break secondLoop;
-				}
-			}
-		}
-		
-		return foundSecond;
-		
+	private final boolean findTwoPairs () {
+		List<Card> cardsList = new ArrayList<Card> (cards);
+		return findMatches (cardsList, 2, true) && findMatches (cardsList, 2, false);
 	}
 
-	private boolean findOnePair () {
+	private final boolean findOnePair () {
+		List<Card> cardsList = new ArrayList<Card> (cards);
+		return findMatches (cardsList, 2, false);
+	}
 
-		Card[] array = cards.toArray (new Card[0]);
+	private final boolean findHighestCard () {
+		return true;
+	}
 
-		for (int i = 0; i < array.length; ++i) {
-			Card first = array[i];
-			for (int j = i + 1; j < array.length; ++j) {
-				Card second = array[j];
+	private static final boolean findMatches (List<Card> cards, int numToMatch, boolean remove) {
+		assert (numToMatch > 0);
+		Stack<Integer> matchedIndices;
 
-				if (first.getFaceValue () == second.getFaceValue ())
-					return true;
+		for (int i = 0; i < cards.size (); ++i) {
+			Card first = cards.get (i);
+			Card.FaceValue faceVal = first.getFaceValue ();
+			int numLeft = numToMatch;
+
+			matchedIndices = new Stack<Integer> ();
+			matchedIndices.push (i);
+
+			loop: while (matchedIndices.size () < numToMatch) {
+				
+				int lastIdx = matchedIndices.peek ();
+				for (int j = lastIdx + 1;; ++j) {
+					if (j >= cards.size ())
+						break loop;
+
+					Card candidate = cards.get (j);
+
+					if (candidate.getFaceValue () == faceVal) {
+						matchedIndices.push (j);
+						break;
+					}
+				}
+
+			}
+			if (matchedIndices.size () == numToMatch) {
+				
+				if (remove) {
+					while (!matchedIndices.empty ()) {
+						int removeIdx = matchedIndices.pop ();
+						cards.remove (removeIdx);
+					}
+				}
+
+				return true;
 			}
 		}
 		return false;
-	}
-
-	private boolean findHighestCard () {
-		return true;
 	}
 
 	private abstract static class PokerHandFinder {
