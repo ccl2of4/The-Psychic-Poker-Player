@@ -1,3 +1,10 @@
+import java.util.List;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Stack;
+
+
 import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
@@ -8,7 +15,145 @@ import java.util.LinkedHashMap;
 import java.util.Arrays;
 import java.util.Stack;
 
-public final class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
+
+
+
+
+
+class Card implements Comparable<Card> {
+	
+	public enum Suit {
+		SPADES, CLUBS, HEARTS, DIAMONDS, NONE
+	}
+
+	public enum FaceValue  {
+		LOW_ACE(1), TWO(2), THREE(3), FOUR(4), FIVE(5),
+		SIX(6), SEVEN(7), EIGHT(8), NINE(9), TEN(10),
+		JACK(11), QUEEN(12), KING(13), HIGH_ACE (14);
+
+		private int val;
+		private FaceValue (int val) {
+			this.val = val;
+		}
+		public int getVal () {
+			return val;
+		}
+	}
+
+
+
+	private FaceValue faceval;
+	private Suit suit;
+
+	public Card (FaceValue faceval, Suit suit) {
+		this.faceval = faceval;
+		this.suit = suit;
+	}
+	public Suit getSuit () {
+		return suit;
+	}
+	public FaceValue getFaceValue () {
+		return faceval;
+	}
+	public void flipAceValue () {
+		if (this.faceval == FaceValue.LOW_ACE)
+			this.faceval = FaceValue.HIGH_ACE;
+		else if (this.faceval == FaceValue.HIGH_ACE)
+			this.faceval = FaceValue.LOW_ACE;
+	}
+
+	@Override
+	public String toString () {
+		String result = "";
+
+		switch (faceval) {
+			case LOW_ACE :
+				result += 'A';
+				break;
+			case HIGH_ACE :
+				result += 'A';
+				break;
+			case TWO :
+				result += '2';
+				break;
+			case THREE :
+				result += '3';
+				break;
+			case FOUR :
+				result += '4';
+				break;
+			case FIVE :
+				result += '5';
+				break;
+			case SIX :
+				result += '6';
+				break;
+			case SEVEN :
+				result += '7';
+				break;
+			case EIGHT :
+				result += '8';
+				break;
+			case NINE :
+				result += '9';
+				break;
+			case TEN :
+				result += 'T';
+				break;
+			case JACK :
+				result += 'J';
+				break;
+			case QUEEN :
+				result += 'Q';
+				break;
+			case KING :
+				result += 'K';
+				break;
+			default :
+				assert (false);
+		}
+
+		switch (suit) {
+			case HEARTS :
+				result += "H";
+				break;
+			case CLUBS :
+				result += "C";
+				break;
+			case DIAMONDS :
+				result += "D";
+				break;
+			case SPADES :
+				result += "S";
+				break;
+			default :
+				assert (false);
+		}
+
+		return result;
+	}
+
+	/* comparable */
+	@Override
+	public int compareTo (Card other) {
+		return this.faceval.getVal () - other.faceval.getVal ();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+final class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 
 	private static LinkedHashMap<String, PokerHandFinder> hands;
 
@@ -272,5 +417,243 @@ public final class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 	private abstract static class PokerHandFinder {
 		public abstract int getPriority ();
 		public abstract boolean find (PokerHand p);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+final class CardReader {
+
+	private CardReader () {}
+
+	public static Card readCard (String cardString) {
+		assert (cardString.length () == 2);
+
+		char faceValChar = cardString.charAt (0);
+		char suitChar = cardString.charAt (1);
+
+		Card.FaceValue faceVal;
+		Card.Suit suit;
+
+		switch (faceValChar) {
+			case 'A' :
+				faceVal = Card.FaceValue.LOW_ACE;
+				break;
+			case '2' :
+				faceVal = Card.FaceValue.TWO;
+				break;
+			case '3' :
+				faceVal = Card.FaceValue.THREE;
+				break;
+			case '4' :
+				faceVal = Card.FaceValue.FOUR;
+				break;
+			case '5' :
+				faceVal = Card.FaceValue.FIVE;
+				break;
+			case '6' :
+				faceVal = Card.FaceValue.SIX;
+				break;
+			case '7' :
+				faceVal = Card.FaceValue.SEVEN;
+				break;
+			case '8' :
+				faceVal = Card.FaceValue.EIGHT;
+				break;
+			case '9' :
+				faceVal = Card.FaceValue.NINE;
+				break;
+			case 'T' :
+				faceVal = Card.FaceValue.TEN;
+				break;
+			case 'J' :
+				faceVal = Card.FaceValue.JACK;
+				break;
+			case 'Q' :
+				faceVal = Card.FaceValue.QUEEN;
+				break;
+			case 'K' :
+				faceVal = Card.FaceValue.KING;
+				break;
+			default :
+				assert (false);
+				faceVal = Card.FaceValue.HIGH_ACE;
+		}
+
+		switch (suitChar) {
+			case 'H' :
+				suit = Card.Suit.HEARTS;
+				break;
+			case 'D' :
+				suit = Card.Suit.DIAMONDS;
+				break;
+			case 'C' :
+				suit = Card.Suit.CLUBS;
+				break;
+			case 'S' :
+				suit = Card.Suit.SPADES;
+				break;
+			default :
+				assert (false);
+				suit = Card.Suit.HEARTS;
+		}
+
+		Card result = new Card (faceVal, suit);
+		return result;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Main {
+
+	public static List<Card> readHand (Iterator<String> input) {
+		ArrayList<Card> result = new ArrayList<Card> ();
+		for (int i = 0; i < 5; ++i) {
+			assert (input.hasNext ());
+			String cardString = input.next ();
+			Card card = CardReader.readCard (cardString);
+			result.add (card);
+		}
+		return result;
+	}
+
+	public static Stack<Card> readDeck (Iterator<String> input) {
+		Stack<Card> result = new Stack<Card> ();
+		Stack<Card> in = new Stack<Card> ();
+		for (int i = 0; i < 5; ++i) {
+			assert (input.hasNext ());
+			String cardString = input.next ();
+			Card card = CardReader.readCard (cardString);
+			in.push (card);
+		}
+
+		while (!in.empty ())
+			result.push (in.pop ());
+
+		return result;
+	}
+
+	public static String solve (List<Card> hand, Stack<Card> deck) {
+		List<Card> usedDeckCards = new ArrayList<Card> ();
+		PokerHand best = null;
+
+		while (true) {
+			
+			PokerHand result = solveHelper (usedDeckCards, hand);
+			if (best == null || result.compareTo (best) > 0)
+				best = result;
+
+			if (deck.empty ())
+				break;
+
+			usedDeckCards.add (deck.pop ());
+		}
+
+		assert (best != null);
+		return best.toString ();
+	}
+
+	public static PokerHand solveHelper (List<Card> usedCards, List<Card> hand) {
+		if (usedCards.size () == 5)
+			return new PokerHand (usedCards);
+
+		PokerHand best = null;
+
+		for (Card card : hand) {
+			List<Card> tempUsedCards = new ArrayList<Card> (usedCards);
+			List<Card> tempHand = new ArrayList<Card> (hand);
+
+			tempHand.remove (card);
+			tempUsedCards.add (card);
+
+			PokerHand result = solveHelper (tempUsedCards, tempHand);
+			if (best == null || result.compareTo (best) > 0)
+				best = result;
+		}
+
+		assert (best != null);
+		return best;
+	}
+
+	public static void printSolution (List<Card> hand, Stack<Card> deck, String result) {
+		System.out.print ("Hand: ");
+		for (Card card : hand) {
+			System.out.print (card + " ");
+		}
+
+		System.out.print ("Deck: ");
+		while (!deck.empty ()) {
+			System.out.print (deck.pop () + " ");
+		}
+
+		System.out.print ("Best hand: ");
+		System.out.print (result);
+
+		System.out.println ();
+	}
+
+	public static void main (String[] args) {
+
+		Scanner input = new Scanner (System.in);
+
+		while (input.hasNext ()) {
+
+			List<Card> hand = readHand (input);
+			Stack<Card> deck = readDeck (input);
+
+			@SuppressWarnings (value="unchecked")
+			Stack<Card> deckClone = (Stack<Card>)deck.clone ();
+
+			String result = solve (hand, deckClone);
+
+			printSolution (hand, deck, result);
+
+		}
+
+		return;
 	}
 }

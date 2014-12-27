@@ -82,8 +82,8 @@ public class Main {
 		}
 
 		System.out.print ("Deck: ");
-		for (Card card : deck) {
-			System.out.print (card + " ");
+		while (!deck.empty ()) {
+			System.out.print (deck.pop () + " ");
 		}
 
 		System.out.print ("Best hand: ");
