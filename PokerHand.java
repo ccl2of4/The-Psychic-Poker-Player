@@ -127,7 +127,7 @@ public final class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 	}
 
 	private final boolean findStraightFlush () {
-		return false;
+		return findStraight () && findFlush ();
 	}
 
 	private final boolean findFourOfAKind () {
@@ -173,9 +173,16 @@ public final class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 		if (found) return true;
 
 		lastCard = array[0];
+		lastCard.flipAceValue ();
 		for (int i = 1; i < array.length; ++i) {
 			Card currentCard = array[i];
+			currentCard.flipAceValue ();
 
+			if (currentCard.getFaceValue().getVal () != (lastCard.getFaceValue().getVal () + 1) ) {
+				return false;
+			}
+
+			lastCard = currentCard;
 		}
 
 		return true;
