@@ -158,19 +158,26 @@ public final class PokerHand implements Comparable<PokerHand>, Iterable<Card> {
 		assert (array.length > 0);
 
 		Card lastCard = array[0];
+
+		boolean found = true;
 		for (int i = 1; i < array.length; ++i) {
 			Card currentCard = array[i];
 
-			int lastFaceVal = lastCard.getFaceValue().getVal ();
-			int currentFaceVal = currentCard.getFaceValue().getVal ();
-			if (i != 1 && lastCard.getFaceValue () == Card.FaceValue.ACE)
-				lastFaceVal = Card.FaceValue.KING.getVal () + 1;
-
-			if (currentFaceVal != (lastFaceVal + 1) )
-				return false;
+			if (currentCard.getFaceValue().getVal () != (lastCard.getFaceValue().getVal () + 1) ) {
+				found = false;
+				break;
+			}
 
 			lastCard = currentCard;
 		}
+		if (found) return true;
+
+		lastCard = array[0];
+		for (int i = 1; i < array.length; ++i) {
+			Card currentCard = array[i];
+
+		}
+
 		return true;
 	}
 

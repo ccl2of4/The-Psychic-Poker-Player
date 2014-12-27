@@ -13,7 +13,7 @@ public final class CardReader {
 
 		switch (faceValChar) {
 			case 'A' :
-				faceVal = Card.FaceValue.ACE;
+				faceVal = Card.FaceValue.LOW_ACE;
 				break;
 			case '2' :
 				faceVal = Card.FaceValue.TWO;
@@ -53,7 +53,7 @@ public final class CardReader {
 				break;
 			default :
 				assert (false);
-				faceVal = Card.FaceValue.ACE;
+				faceVal = Card.FaceValue.HIGH_ACE;
 		}
 
 		switch (suitChar) {
